@@ -67,7 +67,41 @@ export default class ContactIndex extends React.Component {
   };
 
   handleToggleFavorites = (contact) => {
-    console.log(contact);
+    //console.log(contact);
+    this.setState((previousState) => {
+      return {
+        contactList: previousState.contactList.map((obj) => {
+          if (obj.id == contact.id) {
+            return { ...obj, isFavorite: !obj.isFavorite };
+          }
+          return obj;
+        }),
+      };
+    });
+  };
+
+  handleDeleteContact = (contactId) => {
+    this.setState((previousState) => {
+      return {
+        contactList: previousState.contactList.filter((obj) => {
+          return obj.id != contactId;
+        }),
+      };
+    });
+  };
+
+  handleAddRandomContact = (newContact) => {
+    const newFinalContact = {
+      ...newContact,
+      id: this.state.contactList[this.state.contactList.length - 1].id + 1,
+      isFavorite: false,
+    };
+    this.setState((previousState) => {
+      return {
+        contactList: previousState.contactList.concat([newFinalContact]),
+      };
+    });
+    return { status: "success", msg: "Contact was added successfully." };
   };
 
   render() {
@@ -76,10 +110,12 @@ export default class ContactIndex extends React.Component {
         <Header />
         <div className="container" style={{ minHeight: "85vh" }}>
           <div className="row py-3">
-            <div className="col-4 offset-2">
-              <AddRandomContact />
+            <div className="col-4 offset-2 row">
+              <AddRandomContact
+                handleAddRandomContact={this.handleAddRandomContact}
+              />
             </div>
-            <div className="col-4">
+            <div className="col-4 row">
               <RemoveAllContact />
             </div>
             <div className="row py-2">
@@ -94,6 +130,7 @@ export default class ContactIndex extends React.Component {
                     (c) => c.isFavorite == true
                   )}
                   favoriteClick={this.handleToggleFavorites}
+                  deleteClick={this.handleDeleteContact}
                 />
               </div>
             </div>
@@ -104,6 +141,7 @@ export default class ContactIndex extends React.Component {
                     (c) => c.isFavorite == false
                   )}
                   favoriteClick={this.handleToggleFavorites}
+                  deleteClick={this.handleDeleteContact}
                 />
               </div>
             </div>
